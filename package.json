@@ -1,0 +1,32 @@
+{
+  "name": "es6x",
+  "version": "1.0.0",
+  "description": "Implementation of jsx features in pure javascript",
+  "main": "src/es6x.js",
+  "scripts": {
+    "test": "istanbul cover ./node_modules/.bin/jasmine --include-all-sources --root=./src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vasiliy-lector/es6x.git"
+  },
+  "keywords": [
+    "es6",
+    "tagged",
+    "template",
+    "strings",
+    "parser",
+    "jsx"
+  ],
+  "author": "Vasiliy Lector",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vasiliy-lector/es6x/issues"
+  },
+  "homepage": "https://github.com/vasiliy-lector/es6x#readme",
+  "devDependencies": {
+    "istanbul": "1.0.0-alpha.2",
+    "jasmine": "2.4.1",
+    "nano-parser": "1.0.0"
+  }
+}
