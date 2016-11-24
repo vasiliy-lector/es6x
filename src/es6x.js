@@ -137,16 +137,19 @@ function es6x(templates, ...values) {
     return root.parse(templates, values, true);
 }
 
-es6x.configure = function(output, method) {
+function configure(output, method) {
     switch (output) {
         case 'default':
+        case 'universal':
             outputMethod = defaultOutput;
             break;
         case 'react':
         case 'hyperscript':
+        case 'h':
             outputMethod = method;
         break;
     }
 }
 
-exports = es6x;
+exports.es6x = es6x;
+exports.configure = configure;

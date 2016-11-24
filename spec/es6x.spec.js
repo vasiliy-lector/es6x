@@ -1,4 +1,4 @@
-const es6x = require('../src/es6x');
+const { es6x } = require('../src/es6x');
 
 describe('es6x default output', () => {
     it('should convert simple div', () => {
@@ -38,7 +38,7 @@ describe('es6x default output', () => {
     it('should parse component with child', () => {
         const Instance = { instance: true };
 
-        expect(html `<instance of=${Instance} text="Text of block"><p>Text from parent</p></instance>`).toEqual({
+        expect(es6x `<instance of=${Instance} text="Text of block"><p>Text from parent</p></instance>`).toEqual({
             tag: 'instance',
             attrs: {
                 of: Instance,
