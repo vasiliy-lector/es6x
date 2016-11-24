@@ -8,7 +8,7 @@ npm install --save es6x
 
 ## Usage
 ```javascript
-import { es6, configure } from 'es6x';
+import { es6x, configure } from 'es6x';
 
 // No need configure for universal using
 // For using with react
