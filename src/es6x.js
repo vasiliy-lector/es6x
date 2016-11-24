@@ -49,9 +49,9 @@ const
         any(
             placeholder,
             sequence(
-                find('"'),
+                find('\''),
                 placeholder,
-                required(find('"'))
+                required(find('\''))
             ).then(result => result[1]),
             sequence(
                 find('"'),
