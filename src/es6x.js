@@ -30,17 +30,31 @@ const
     quotedAttr = sequence(
         attrName,
         find('='),
-        required(find('"')),
-        find(/[^"]*/),
-        required(find('"'))
-    ).then(result => [result[0], result[3]]),
+        any(
+            sequence(
+                find('\''),
+                find(/[^']*/),
+                required(find('\''))
+            ),
+            sequence(
+                find('"'),
+                find(/[^"]*/),
+                required(find('"'))
+            )
+        )
+    ).then(result => [result[0], result[2][1]]),
     attrWithPlaceholder = sequence(
         attrName,
         find('='),
         any(
             placeholder,
             sequence(
-                required(find('"')),
+                find('"'),
+                placeholder,
+                required(find('"'))
+            ).then(result => result[1]),
+            sequence(
+                find('"'),
                 placeholder,
                 required(find('"'))
             ).then(result => result[1])

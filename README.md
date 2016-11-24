@@ -46,7 +46,7 @@ equal to this es6x code:
 ```javascript
 es6x `<${Form} action=${handleSubmit}>
     <${Input}
-        className="input"
+        className='input'
         value=${value}
         ${props}
     />
