@@ -1,6 +1,6 @@
 const es6x = require('../src/es6x');
 
-describe('es6x default output', () => {
+describe('es6x', () => {
     it('should convert simple div', () => {
         expect(es6x `<div className="block"></div>`).toEqual({
             tag: 'div',
@@ -97,4 +97,63 @@ describe('es6x default output', () => {
             }]
         });
     });
+
+    it('should convert selfclosed element', () => {
+        expect(es6x `<input type="text" value="${'3'}" />`).toEqual({
+            tag: 'input',
+            attrs: {
+                type: 'text',
+                value: '3'
+            },
+            children: []
+        });
+
+        expect(es6x `<input type='text' value='${'3'}'/>`).toEqual({
+            tag: 'input',
+            attrs: {
+                type: 'text',
+                value: '3'
+            },
+            children: []
+        });
+    });
+
+    it('should correctly work with white spaces', () => {
+        expect(es6x `
+            <div>
+                <p> text </p>
+                <p> text <b>text </b> <strong> text</strong> text </p>
+            </div>
+        `).toEqual({
+            tag: 'div',
+            attrs: {},
+            children: [{
+                tag: 'p',
+                attrs: {},
+                children: ['text']
+            }, {
+                tag: 'p',
+                attrs: {},
+                children: ['text', ' ', {
+                    tag: 'b',
+                    attrs: {},
+                    children: ['text']
+                }, ' ', {
+                    tag: 'strong',
+                    attrs: {},
+                    children: ['text']
+                }, ' ', 'text']
+            }]
+        });
+    });
+
+    it ('should set output method', () => {
+        const mockMethod = function(tag, attrs, children) {
+            return [tag, attrs, children];
+        };
+
+        es6x.setOutputMethod(mockMethod);
+        expect(es6x `<p id='id1'>text</p>`).toEqual(['p', { id: 'id1' }, ['text']]);
+        es6x.setOutputMethod();
+    })
 });
