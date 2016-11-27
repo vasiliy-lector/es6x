@@ -10,14 +10,7 @@ const {
     deffered
 } = require('nano-parser');
 
-function defaultOutput(tag, attrs, children) {
-    return {
-        tag,
-        attrs,
-        children
-    };
-}
-let outputMethod = defaultOutput;
+let outputMethod;
 
 const
     whiteSpace = find(/^\s+/),
@@ -147,23 +140,26 @@ const
         end()
     ).useCache().then((result, values) => result[1](values));
 
+function defaultOutput(tag, attrs, children) {
+    return {
+        tag,
+        attrs,
+        children
+    };
+}
+
 function es6x(templates, ...values) {
     return root.parse(templates, values, true);
 }
 
-function configure(output, method) {
-    switch (output) {
-        case 'default':
-        case 'universal':
-            outputMethod = defaultOutput;
-            break;
-        case 'react':
-        case 'hyperscript':
-        case 'h':
-            outputMethod = method;
-        break;
+es6x.setOutputMethod = function setOutputMethod(method) {
+    if (method) {
+        outputMethod = method;
+    } else {
+        outputMethod = defaultOutput;
     }
 }
 
-exports.es6x = es6x;
-exports.configure = configure;
+es6x.setOutputMethod();
+
+module.exports = es6x;

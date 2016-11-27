@@ -1,4 +1,4 @@
-const { es6x } = require('../src/es6x');
+const es6x = require('../src/es6x');
 
 describe('es6x default output', () => {
     it('should convert simple div', () => {
