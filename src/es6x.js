@@ -86,6 +86,7 @@ const
         return memo;
     }),
     component = sequence(
+        optionalWhiteSpace,
         find('<').not(find('</')),
         required(any(
             tagName,
@@ -101,10 +102,9 @@ const
             sequence(
                 required(find('>')),
                 optional(repeat(any(
-                    whiteSpace,
-                    placeholder.then(index => values => values[index]),
+                    deffered(() => component),
                     textNode,
-                    deffered(() => component)
+                    placeholder.then(index => values => values[index])
                 ))),
                 required(sequence(
                     find('</'),
@@ -126,31 +126,30 @@ const
 
                 return memo;
             })
-        ))
+        )),
+        optionalWhiteSpace
     ).then(result => values => outputMethod(
-        typeof result[1] === 'function' ? result[1](values) : result[1],
-        result[2](values),
-        typeof result[4] === 'function' ? result[4](values) : result[4]
+        typeof result[2] === 'function' ? result[2](values) : result[2],
+        result[3](values),
+        typeof result[5] === 'function' ? result[5](values) : result[5]
     )),
 
     root = sequence(
-        optionalWhiteSpace,
         component,
-        optionalWhiteSpace,
         end()
-    ).useCache().then((result, values) => result[1](values));
+    ).useCache().then((result, values) => result[0](values)),
 
-function defaultOutput(tag, attrs, children) {
-    return {
-        tag,
-        attrs,
-        children
+    defaultOutput = function defaultOutput(tag, attrs, children) {
+        return {
+            tag,
+            attrs,
+            children
+        };
+    },
+
+    es6x = function es6x(templates, ...values) {
+        return root.parse(templates, values, true);
     };
-}
-
-function es6x(templates, ...values) {
-    return root.parse(templates, values, true);
-}
 
 es6x.setOutputMethod = function setOutputMethod(method) {
     if (method) {
