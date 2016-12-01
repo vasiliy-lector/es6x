@@ -1,6 +1,6 @@
 {
   "name": "es6x",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Implementation of jsx features in pure javascript",
   "main": "src/es6x.js",
   "scripts": {
