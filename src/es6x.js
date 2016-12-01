@@ -100,11 +100,17 @@ const
             find('/>').then(() => []),
             sequence(
                 required(find('>')),
-                optional(repeat(any(
-                    textNode,
-                    deffered(() => component),
-                    placeholder.then(index => values => values[index])
-                ))),
+                optionalWhiteSpace,
+                optional(any(
+                    repeat(deffered(() => component), optionalWhiteSpace)
+                        .not(find(/^\s*[^<]+/)),
+                    repeat(any(
+                        textNode,
+                        deffered(() => component),
+                        placeholder.then(index => values => values[index])
+                    ))
+                )),
+                optionalWhiteSpace,
                 required(sequence(
                     find('</'),
                     any(
@@ -116,7 +122,7 @@ const
                 ))
             ).then(result => values => {
                 const memo = [],
-                    items = result[1] || [];
+                    items = result[2] || [];
 
                 for (let i = 0, l = items.length; i < l; i++) {
                     const item = items[i];

@@ -134,19 +134,21 @@ describe('es6x', () => {
             children: [{
                 tag: 'p',
                 attrs: {},
-                children: ['Text of paragraph. Value ', 'some', ' here.']
+                children: ['Text of paragraph. Value ', 'some', ` here.
+                `]
             }, {
                 tag: 'p',
                 attrs: {},
                 children: ['Text ', {
                     tag: 'b',
                     attrs: {},
-                    children: ['text']
+                    children: ['text ']
                 }, ' ', {
                     tag: 'strong',
                     attrs: {},
                     children: ['text']
-                }, ' text.']
+                }, ` text.
+                `]
             }]
         });
     });
