@@ -99,10 +99,11 @@ describe('es6x', () => {
     });
 
     it('should convert selfclosed element', () => {
-        expect(es6x `<input type="text" value="${'3'}" />`).toEqual({
+        expect(es6x `<input type="text" checked value="${'3'}" />`).toEqual({
             tag: 'input',
             attrs: {
                 type: 'text',
+                checked: true,
                 value: '3'
             },
             children: []
@@ -115,6 +116,23 @@ describe('es6x', () => {
                 value: '3'
             },
             children: []
+        });
+    });
+
+    it('should work with components', () => {
+        const Component = {};
+        expect(es6x `<${Component}
+            id='id1'
+            value=${'value1'}
+            ${{ name: 'name1' }}
+        >Text</${Component}>`).toEqual({
+            tag: Component,
+            attrs: {
+                id: 'id1',
+                value: 'value1',
+                name: 'name1'
+            },
+            children: ['Text']
         });
     });
 
