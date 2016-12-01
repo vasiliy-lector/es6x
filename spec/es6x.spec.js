@@ -122,7 +122,8 @@ describe('es6x', () => {
         expect(es6x `
             <div>
                 <p>
-                    Text of paragraph. Value ${'some'} here.
+                    Text of paragraph.
+                    Value ${'some'} here.
                 </p>
                 <p>
                     Text <b>text </b> <strong> text</strong> text.
@@ -134,7 +135,8 @@ describe('es6x', () => {
             children: [{
                 tag: 'p',
                 attrs: {},
-                children: ['Text of paragraph. Value ', 'some', ` here.
+                children: [`Text of paragraph.
+                    Value `, 'some', ` here.
                 `]
             }, {
                 tag: 'p',
