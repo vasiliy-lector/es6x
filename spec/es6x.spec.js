@@ -121,8 +121,12 @@ describe('es6x', () => {
     it('should correctly work with white spaces', () => {
         expect(es6x `
             <div>
-                <p> text </p>
-                <p> text <b>text </b> <strong> text</strong> text </p>
+                <p>
+                    Text of paragraph. Value ${'some'} here.
+                </p>
+                <p>
+                    Text <b>text </b> <strong> text</strong> text.
+                </p>
             </div>
         `).toEqual({
             tag: 'div',
@@ -130,11 +134,11 @@ describe('es6x', () => {
             children: [{
                 tag: 'p',
                 attrs: {},
-                children: ['text']
+                children: ['Text of paragraph. Value ', 'some', ' here.']
             }, {
                 tag: 'p',
                 attrs: {},
-                children: ['text', ' ', {
+                children: ['Text ', {
                     tag: 'b',
                     attrs: {},
                     children: ['text']
@@ -142,7 +146,7 @@ describe('es6x', () => {
                     tag: 'strong',
                     attrs: {},
                     children: ['text']
-                }, ' ', 'text']
+                }, ' text.']
             }]
         });
     });
