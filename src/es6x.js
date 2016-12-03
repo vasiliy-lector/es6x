@@ -7,7 +7,7 @@ const {
     repeat,
     required,
     sequence,
-    deffered
+    defer
 } = require('nano-parser');
 
 let outputMethod;
@@ -102,11 +102,11 @@ const
                 required(find('>')),
                 optionalWhiteSpace,
                 optional(any(
-                    repeat(deffered(() => component), optionalWhiteSpace)
+                    repeat(defer(() => component), optionalWhiteSpace)
                         .not(find(/^\s*[^<]+/)),
                     repeat(any(
                         textNode,
-                        deffered(() => component),
+                        defer(() => component),
                         placeholder.then(index => values => values[index])
                     ))
                 )),
