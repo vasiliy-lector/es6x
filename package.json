@@ -1,6 +1,6 @@
 {
   "name": "es6x",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Implementation of jsx features in pure javascript",
   "main": "src/es6x.js",
   "scripts": {
@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/vasiliy-lector/es6x#readme",
   "dependencies": {
-    "nano-parser": "1.0.1"
+    "nano-parser": "1.0.2"
   },
   "devDependencies": {
     "istanbul": "1.0.0-alpha.2",
