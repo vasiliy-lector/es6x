@@ -191,12 +191,12 @@ describe('es6x', () => {
     });
 
     it ('should set output method', () => {
-        const mockMethod = function(tag, attrs, children) {
-            return [tag, attrs, children];
+        const mockMethod = function(tag, attrs, firstChild) {
+            return [tag, attrs, firstChild];
         };
 
         es6x.setOutputMethod(mockMethod);
-        expect(es6x `<p id='id1'>text</p>`).toEqual(['p', { id: 'id1' }, ['text']]);
+        expect(es6x `<p id='id1'>text</p>`).toEqual(['p', { id: 'id1' }, 'text']);
         es6x.setOutputMethod();
     })
 });

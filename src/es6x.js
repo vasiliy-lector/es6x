@@ -160,14 +160,24 @@ const
         return root.parse(templates, values, true);
     };
 
-es6x.setOutputMethod = function setOutputMethod(method) {
+es6x.setOutputMethod = function setOutputMethod(method, childsAsArguments) {
+    childsAsArguments = childsAsArguments === undefined ? true : childsAsArguments;
+
     if (method) {
-        outputMethod = method;
+        outputMethod = function(tag, attrs, children) {
+            var args = [tag, attrs];
+
+            for (var i = 0, l = children.length; i < l; i++) {
+                args[i + 2] = children[i];
+            }
+
+            return method.apply(null, args);
+        }
     } else {
         outputMethod = defaultOutput;
     }
 }
 
-es6x.setOutputMethod();
+outputMethod = defaultOutput;
 
 module.exports = es6x;
