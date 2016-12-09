@@ -136,6 +136,23 @@ describe('es6x', () => {
         });
     });
 
+    it('should work with elements with hybrid childs', () => {
+        const Component = {};
+        expect(es6x `<div className="${'b'}"><p>${'text'}</p>${'something'}</div>`).toEqual({
+            tag: 'div',
+            attrs: {
+                className: 'b'
+            },
+            children: [{
+                tag: 'p',
+                attrs: {},
+                children: [
+                    'text'
+                ]
+            }, 'something']
+        });
+    });
+
     it('should correctly work with white spaces', () => {
         expect(es6x `
             <div>

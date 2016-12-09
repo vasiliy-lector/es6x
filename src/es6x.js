@@ -6,6 +6,7 @@ const {
     optional,
     repeat,
     required,
+    lookForward,
     sequence,
     defer
 } = require('nano-parser');
@@ -102,12 +103,14 @@ const
                 required(find('>')),
                 optionalWhiteSpace,
                 optional(any(
-                    repeat(defer(() => component), optionalWhiteSpace)
-                        .not(find(/^\s*[^<]+/)),
+                    sequence(
+                        repeat(defer(() => component), optionalWhiteSpace),
+                        lookForward(find(/^\s*<\//))
+                    ).then(result => result[0]).not(find(/^[^<]+/)),
                     repeat(any(
+                        placeholder.then(index => values => values[index]),
                         textNode,
-                        defer(() => component),
-                        placeholder.then(index => values => values[index])
+                        defer(() => component)
                     ))
                 )),
                 optionalWhiteSpace,
