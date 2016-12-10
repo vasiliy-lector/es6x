@@ -160,9 +160,7 @@ const
         return root.parse(templates, values, true);
     };
 
-es6x.setOutputMethod = function setOutputMethod(method, childsAsArguments) {
-    childsAsArguments = childsAsArguments === undefined ? true : childsAsArguments;
-
+es6x.setOutputMethod = function setOutputMethod(method) {
     if (method) {
         outputMethod = function(tag, attrs, children) {
             var args = [tag, attrs];
