@@ -1,26 +1,31 @@
-const {
-    any,
-    end,
-    find,
-    next,
-    optional,
-    repeat,
-    required,
-    lookForward,
-    sequence,
-    defer
-} = require('nano-parser');
+var parser = require('nano-parser');
+    any = parser.any,
+    end = parser.end,
+    find = parser.find,
+    next = parser.next,
+    optional = parser.optional,
+    repeat = parser.repeat,
+    required = parser.required,
+    lookForward = parser.lookForward,
+    sequence = parser.sequence,
+    defer = parser.defer,
 
-let outputMethod;
+    defaultOutput = function defaultOutput(tag, attrs, children) {
+        return {
+            tag: tag,
+            attrs: attrs,
+            children: children
+        };
+    },
+    outputMethod = defaultOutput,
 
-const
     whiteSpace = find(/^\s+/),
     optionalWhiteSpace = optional(whiteSpace),
     textNode = find(/^[^<]+/),
     tagName = find(/^[a-zA-Z][a-zA-Z0-9]*/),
     placeholder = next(),
     attrName = find(/^[a-zA-Z_][a-zA-Z0-9]*/),
-    booleanAttr = attrName.then(result => [result, true]),
+    booleanAttr = attrName.then(function(result) { return [result, true] }),
     quotedAttr = sequence(
         attrName,
         find('='),
@@ -36,7 +41,7 @@ const
                 required(find('"'))
             )
         )
-    ).then(result => [result[0], result[2][1]]),
+    ).then(function(result) { return [result[0], result[2][1]] }),
     attrWithPlaceholder = sequence(
         attrName,
         find('='),
@@ -46,37 +51,37 @@ const
                 find('\''),
                 placeholder,
                 required(find('\''))
-            ).then(result => result[1]),
+            ).then(function(result) { return result[1] }),
             sequence(
                 find('"'),
                 placeholder,
                 required(find('"'))
-            ).then(result => result[1])
+            ).then(function(result) { return result[1] })
         )
-    ).then(result => (obj, values) => {
+    ).then(function(result) { return function(obj, values) {
         obj[result[0]] = values[result[2]];
-    }),
+    }}),
     attrs = repeat(
         any(
-            placeholder.then(index => (obj, values) => {
-                const value = values[index],
-                    keys = Object.keys(value);
-                let i = keys.length;
+            placeholder.then(function(index) { return function(obj, values) {
+                var value = values[index],
+                    keys = Object.keys(value),
+                    i = keys.length;
 
                 while (i--) {
                     obj[keys[i]] = value[keys[i]];
                 }
-            }),
+            }}),
             attrWithPlaceholder,
             quotedAttr,
             booleanAttr
         ),
         whiteSpace
-    ).then(results => values => {
-        const memo = {};
+    ).then(function(results) { return function(values) {
+        var memo = {};
 
-        for (let i = 0, l = results.length; i < l; i++) {
-            const result = results[i];
+        for (var i = 0, l = results.length; i < l; i++) {
+            var result = results[i];
             if (typeof result === 'function') {
                 result(memo, values);
             } else {
@@ -85,32 +90,32 @@ const
         }
 
         return memo;
-    }),
+    }}),
     component = sequence(
         find('<').not(find('</')),
         required(any(
             tagName,
-            placeholder.then(index => values => values[index])
+            placeholder.then(function(index) { return function(values) { return values[index] }})
         )),
         optional(sequence(
             whiteSpace,
             attrs
-        )).then(result => values => result ? result[1](values) : {}),
+        )).then(function(result) { return function(values) { return result ? result[1](values) : {} }}),
         optionalWhiteSpace,
         required(any(
-            find('/>').then(() => []),
+            find('/>').then(function() { return [] }),
             sequence(
                 required(find('>')),
                 optionalWhiteSpace,
                 optional(any(
                     sequence(
-                        repeat(defer(() => component), optionalWhiteSpace),
+                        repeat(defer(function() { return component }), optionalWhiteSpace),
                         lookForward(find(/^\s*<\//))
-                    ).then(result => result[0]).not(find(/^[^<]+/)),
+                    ).then(function(result) { return result[0] }).not(find(/^[^<]+/)),
                     repeat(any(
-                        placeholder.then(index => values => values[index]),
+                        placeholder.then(function (index) { return function(values) { return values[index] }}),
                         textNode,
-                        defer(() => component)
+                        defer(function() { return component })
                     ))
                 )),
                 optionalWhiteSpace,
@@ -123,41 +128,39 @@ const
                     optionalWhiteSpace,
                     find('>')
                 ))
-            ).then(result => values => {
-                const memo = [],
+            ).then(function(result) { return function(values) {
+                var memo = [],
                     items = result[2] || [];
 
-                for (let i = 0, l = items.length; i < l; i++) {
-                    const item = items[i];
+                for (var i = 0, l = items.length; i < l; i++) {
+                    var item = items[i];
                     memo[i] = typeof item === 'function' ? item(values) : item;
                 }
 
                 return memo;
-            })
+            }})
         ))
-    ).then(result => values => outputMethod(
-        typeof result[1] === 'function' ? result[1](values) : result[1],
-        result[2](values),
-        typeof result[4] === 'function' ? result[4](values) : result[4]
-    )),
+    ).then(function(result) { return function(values) {
+        return outputMethod(
+            typeof result[1] === 'function' ? result[1](values) : result[1],
+            result[2](values),
+            typeof result[4] === 'function' ? result[4](values) : result[4]
+        );
+    }}),
 
     root = sequence(
         optionalWhiteSpace,
         component,
         optionalWhiteSpace,
         end()
-    ).useCache().then((result, values) => result[1](values)),
+    ).useCache().then(function(result, values) { return result[1](values) }),
 
-    defaultOutput = function defaultOutput(tag, attrs, children) {
-        return {
-            tag,
-            attrs,
-            children
-        };
-    },
+    es6x = function es6x(templates) {
+        for (var i = 1, l = arguments.length, values = Array(l - 1); i < l; i++) {
+            values[i - 1] = arguments[i];
+        }
 
-    es6x = function es6x(templates, ...values) {
-        return root.parse(templates, values, true);
+        return root.parse(templates, values);
     };
 
 es6x.setOutputMethod = function setOutputMethod(method) {
@@ -175,7 +178,5 @@ es6x.setOutputMethod = function setOutputMethod(method) {
         outputMethod = defaultOutput;
     }
 }
-
-outputMethod = defaultOutput;
 
 module.exports = es6x;
