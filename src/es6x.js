@@ -25,7 +25,9 @@ var parser = require('nano-parser');
     tagName = find(/^[a-zA-Z][a-zA-Z0-9]*/),
     placeholder = next(),
     attrName = find(/^[a-zA-Z_][a-zA-Z0-9]*/),
-    booleanAttr = attrName.then(function(result) { return [result, true] }),
+    booleanAttr = attrName.then(function(result) {
+        return [result, true];
+    }),
     quotedAttr = sequence(
         attrName,
         find('='),
@@ -41,7 +43,9 @@ var parser = require('nano-parser');
                 required(find('"'))
             )
         )
-    ).then(function(result) { return [result[0], result[2][1]] }),
+    ).then(function(result) {
+        return [result[0], result[2][1]];
+    }),
     attrWithPlaceholder = sequence(
         attrName,
         find('='),
@@ -51,12 +55,16 @@ var parser = require('nano-parser');
                 find('\''),
                 placeholder,
                 required(find('\''))
-            ).then(function(result) { return result[1] }),
+            ).then(function(result) {
+                return result[1];
+            }),
             sequence(
                 find('"'),
                 placeholder,
                 required(find('"'))
-            ).then(function(result) { return result[1] })
+            ).then(function(result) {
+                return result[1];
+            })
         )
     ).then(function(result) { return function(obj, values) {
         obj[result[0]] = values[result[2]];
@@ -95,12 +103,16 @@ var parser = require('nano-parser');
         find('<').not(find('</')),
         required(any(
             tagName,
-            placeholder.then(function(index) { return function(values) { return values[index] }})
+            placeholder.then(function(index) { return function(values) {
+                return values[index];
+            }})
         )),
         optional(sequence(
             whiteSpace,
             attrs
-        )).then(function(result) { return function(values) { return result ? result[1](values) : {} }}),
+        )).then(function(result) { return function(values) {
+            return result ? result[1](values) : {};
+        }}),
         optionalWhiteSpace,
         required(any(
             find('/>').then(function() { return [] }),
@@ -111,9 +123,13 @@ var parser = require('nano-parser');
                     sequence(
                         repeat(defer(function() { return component }), optionalWhiteSpace),
                         lookForward(find(/^\s*<\//))
-                    ).then(function(result) { return result[0] }).not(find(/^[^<]+/)),
+                    ).then(function(result) {
+                        return result[0];
+                    }).not(find(/^[^<]+/)),
                     repeat(any(
-                        placeholder.then(function (index) { return function(values) { return values[index] }}),
+                        placeholder.then(function (index) { return function(values) {
+                            return values[index];
+                        }}),
                         textNode,
                         defer(function() { return component })
                     ))
@@ -153,7 +169,9 @@ var parser = require('nano-parser');
         component,
         optionalWhiteSpace,
         end()
-    ).useCache().then(function(result, values) { return result[1](values) }),
+    ).useCache().then(function(result, values) {
+        return result[1](values);
+    }),
 
     es6x = function es6x(templates) {
         for (var i = 1, l = arguments.length, values = Array(l - 1); i < l; i++) {
