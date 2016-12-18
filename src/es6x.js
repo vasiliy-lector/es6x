@@ -6,7 +6,7 @@ var parser = require('nano-parser');
     optional = parser.optional,
     repeat = parser.repeat,
     required = parser.required,
-    lookForward = parser.lookForward,
+    test = parser.test,
     sequence = parser.sequence,
     defer = parser.defer,
 
@@ -122,7 +122,7 @@ var parser = require('nano-parser');
                 optional(any(
                     sequence(
                         repeat(defer(function() { return component }), optionalWhiteSpace),
-                        lookForward(find(/^\s*<\//))
+                        test(find(/^\s*<\//))
                     ).then(function(result) {
                         return result[0];
                     }).not(find(/^[^<]+/)),
