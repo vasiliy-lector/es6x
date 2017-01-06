@@ -22,9 +22,11 @@ var parser = require('nano-parser');
     whiteSpace = find(/^\s+/),
     optionalWhiteSpace = optional(whiteSpace),
     textNode = find(/^[^<]+/),
-    tagName = find(/^[a-zA-Z][a-zA-Z0-9]*/),
+    tagNameRegexp = /^[a-zA-Z][a-zA-Z0-9]*/,
+    tagName = find(tagNameRegexp),
     placeholder = next(),
-    attrName = find(/^[a-zA-Z_][a-zA-Z0-9]*/),
+    attrNameRegexp = /^[a-zA-Z_][a-zA-Z0-9]*/,
+    attrName = find(attrNameRegexp),
     booleanAttr = attrName.then(function(result) {
         return [result, true];
     }),
@@ -72,12 +74,19 @@ var parser = require('nano-parser');
     attrs = repeat(
         any(
             placeholder.then(function(index) { return function(obj, values) {
-                var value = values[index],
-                    keys = Object.keys(value),
+                var value = values[index];
+
+                if (typeof value !== 'object') {
+                    return;
+                }
+
+                var keys = Object.keys(value),
                     i = keys.length;
 
                 while (i--) {
-                    obj[keys[i]] = value[keys[i]];
+                    if (attrNameRegexp.test(keys[i])) {
+                        obj[keys[i]] = value[keys[i]];
+                    }
                 }
             }}),
             attrWithPlaceholder,
@@ -104,7 +113,7 @@ var parser = require('nano-parser');
         required(any(
             tagName,
             placeholder.then(function(index) { return function(values) {
-                return values[index];
+                return typeof values[index] !== 'string' || tagNameRegexp.test(values[index]) ? values[index] : 'div';
             }})
         )),
         optional(sequence(
@@ -181,8 +190,10 @@ var parser = require('nano-parser');
         return root.parse(templates, values);
     };
 
-es6x.setOutputMethod = function setOutputMethod(method) {
-    if (method) {
+es6x.setOutputMethod = function setOutputMethod(method, childsAsArgs) {
+    childsAsArgs = childsAsArgs === undefined ? true : childsAsArgs;
+
+    if (childsAsArgs && method) {
         outputMethod = function(tag, attrs, children) {
             var args = [tag, attrs];
 
@@ -192,6 +203,8 @@ es6x.setOutputMethod = function setOutputMethod(method) {
 
             return method.apply(null, args);
         }
+    } else if (method) {
+        outputMethod = method;
     } else {
         outputMethod = defaultOutput;
     }
