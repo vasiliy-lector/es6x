@@ -17,7 +17,9 @@ var parser = require('nano-parser');
             children: children
         };
     },
-    outputMethod = defaultOutput,
+    globalConfig = {
+        outputMethod: defaultOutput
+    },
 
     whiteSpace = find(/^\s+/),
     optionalWhiteSpace = optional(whiteSpace),
@@ -136,8 +138,8 @@ var parser = require('nano-parser');
                         return result[0];
                     }).not(find(/^[^<]+/)),
                     repeat(any(
-                        placeholder.then(function (index) { return function(values) {
-                            return values[index];
+                        placeholder.then(function (index) { return function(data) {
+                            return data.values[index];
                         }}),
                         textNode,
                         defer(function() { return component })
@@ -153,23 +155,23 @@ var parser = require('nano-parser');
                     optionalWhiteSpace,
                     find('>')
                 ))
-            ).then(function(result) { return function(values) {
+            ).then(function(result) { return function(data) {
                 var memo = [],
                     items = result[2] || [];
 
                 for (var i = 0, l = items.length; i < l; i++) {
                     var item = items[i];
-                    memo[i] = typeof item === 'function' ? item(values) : item;
+                    memo[i] = typeof item === 'function' ? item(data) : item;
                 }
 
                 return memo;
             }})
         ))
-    ).then(function(result) { return function(values) {
-        return outputMethod(
-            typeof result[1] === 'function' ? result[1](values) : result[1],
-            result[2](values),
-            typeof result[4] === 'function' ? result[4](values) : result[4]
+    ).then(function(result) { return function(data) {
+        return data.config.outputMethod(
+            typeof result[1] === 'function' ? result[1](data.values) : result[1],
+            result[2](data.values),
+            typeof result[4] === 'function' ? result[4](data) : result[4]
         );
     }}),
 
@@ -178,23 +180,29 @@ var parser = require('nano-parser');
         component,
         optionalWhiteSpace,
         end()
-    ).useCache().then(function(result, values) {
-        return result[1](values);
+    ).useCache().then(function(result, data) {
+        return result[1](data);
     }),
 
-    es6x = function es6x(templates) {
-        for (var i = 1, l = arguments.length, values = Array(l - 1); i < l; i++) {
-            values[i - 1] = arguments[i];
+    getValuesFromArguments = function getValuesFromArguments(args) {
+        for (var i = 1, l = args.length, values = Array(l - 1); i < l; i++) {
+            values[i - 1] = args[i];
         }
 
-        return root.parse(templates, values);
-    };
+        return values;
+    },
 
-es6x.setOutputMethod = function setOutputMethod(method, childsAsArgs) {
-    childsAsArgs = childsAsArgs === undefined ? true : childsAsArgs;
+    createInstance = function createInstance(config) {
+        return function es6x(templates) {
+            return root.parse(templates, { config: config, values: getValuesFromArguments(arguments) });
+        };
+    },
 
-    if (childsAsArgs && method) {
-        outputMethod = function(tag, attrs, children) {
+    es6x = createInstance(globalConfig);
+
+es6x.setOutputMethod = function setOutputMethod(method) {
+    if (method) {
+        globalConfig.outputMethod = function(tag, attrs, children) {
             var args = [tag, attrs];
 
             for (var i = 0, l = children.length; i < l; i++) {
@@ -203,11 +211,11 @@ es6x.setOutputMethod = function setOutputMethod(method, childsAsArgs) {
 
             return method.apply(null, args);
         }
-    } else if (method) {
-        outputMethod = method;
     } else {
-        outputMethod = defaultOutput;
+        globalConfig.outputMethod = defaultOutput;
     }
-}
+};
+
+es6x.createInstance = createInstance;
 
 module.exports = es6x;
