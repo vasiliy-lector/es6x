@@ -10,17 +10,6 @@ var parser = require('nano-parser');
     sequence = parser.sequence,
     defer = parser.defer,
 
-    defaultOutput = function defaultOutput(tag, attrs, children) {
-        return {
-            tag: tag,
-            attrs: attrs,
-            children: children
-        };
-    },
-    globalConfig = {
-        outputMethod: defaultOutput
-    },
-
     whiteSpace = find(/^\s+/),
     optionalWhiteSpace = optional(whiteSpace),
     textNode = find(/^[^<]+/),
@@ -138,8 +127,8 @@ var parser = require('nano-parser');
                         return result[0];
                     }).not(find(/^[^<]+/)),
                     repeat(any(
-                        placeholder.then(function (index) { return function(data) {
-                            return data.values[index];
+                        placeholder.then(function (index) { return function(values) {
+                            return values[index];
                         }}),
                         textNode,
                         defer(function() { return component })
@@ -155,23 +144,23 @@ var parser = require('nano-parser');
                     optionalWhiteSpace,
                     find('>')
                 ))
-            ).then(function(result) { return function(data) {
+            ).then(function(result) { return function(values, config) {
                 var memo = [],
                     items = result[2] || [];
 
                 for (var i = 0, l = items.length; i < l; i++) {
                     var item = items[i];
-                    memo[i] = typeof item === 'function' ? item(data) : item;
+                    memo[i] = typeof item === 'function' ? item(values, config) : item;
                 }
 
                 return memo;
             }})
         ))
-    ).then(function(result) { return function(data) {
-        return data.config.outputMethod(
-            typeof result[1] === 'function' ? result[1](data.values) : result[1],
-            result[2](data.values),
-            typeof result[4] === 'function' ? result[4](data) : result[4]
+    ).then(function(result) { return function(values, config) {
+        return config.outputMethod(
+            typeof result[1] === 'function' ? result[1](values) : result[1],
+            result[2](values),
+            typeof result[4] === 'function' ? result[4](values, config) : result[4]
         );
     }}),
 
@@ -181,7 +170,7 @@ var parser = require('nano-parser');
         optionalWhiteSpace,
         end()
     ).useCache().then(function(result, data) {
-        return result[1](data);
+        return result[1](data.values, data.config);
     }),
 
     getValuesFromArguments = function getValuesFromArguments(args) {
@@ -196,6 +185,17 @@ var parser = require('nano-parser');
         return function es6x(templates) {
             return root.parse(templates, { config: config, values: getValuesFromArguments(arguments) });
         };
+    },
+
+    defaultOutput = function defaultOutput(tag, attrs, children) {
+        return {
+            tag: tag,
+            attrs: attrs,
+            children: children
+        };
+    },
+    globalConfig = {
+        outputMethod: defaultOutput
     },
 
     es6x = createInstance(globalConfig);
