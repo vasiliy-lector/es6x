@@ -1,4 +1,4 @@
-var parser = require('nano-parser');
+var parser = require('nano-parser'),
     any = parser.any,
     end = parser.end,
     find = parser.find,
