@@ -22,14 +22,12 @@ describe('es6x', () => {
         });
     });
 
-    it('should convert simple div with prop underscore', () => {
-        expect(es6x `<div className="block" _=${{ id: 1 }}></div>`).toEqual({
+    it('should support data-attribute', () => {
+        expect(es6x `<div className="block" data-id=${1}></div>`).toEqual({
             tag: 'div',
             attrs: {
                 className: 'block',
-                _: {
-                    id: 1
-                }
+                'data-id': 1
             },
             children: []
         });

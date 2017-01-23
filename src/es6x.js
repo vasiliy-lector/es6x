@@ -1,4 +1,4 @@
-var parser = require('nano-parser');
+var parser = require('nano-parser'),
     any = parser.any,
     end = parser.end,
     find = parser.find,
@@ -24,7 +24,7 @@ var parser = require('nano-parser');
     textNode = find(/^[^<]+/),
     tagName = find(/^[a-zA-Z][a-zA-Z0-9]*/),
     placeholder = next(),
-    attrName = find(/^[a-zA-Z_][a-zA-Z0-9]*/),
+    attrName = find(/^[a-zA-Z][a-zA-Z0-9\-]*/),
     booleanAttr = attrName.then(function(result) {
         return [result, true];
     }),
