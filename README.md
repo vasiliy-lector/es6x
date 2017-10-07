@@ -55,7 +55,7 @@ export default class FormController extends Component {
     }
 }
 ```
-The render method body is equal this jsx code:
+The render method body is equal to this jsx code:
 ```javascript
 return <Form onSubmit={this.handleSubmit}>
     <Input
