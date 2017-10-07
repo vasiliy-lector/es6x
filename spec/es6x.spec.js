@@ -1,8 +1,8 @@
-const es6x = require('../src/es6x');
+const jsx = require('../src/es6x');
 
 describe('es6x', () => {
     it('should convert simple div', () => {
-        expect(es6x `<div className="block"></div>`).toEqual({
+        expect(jsx `<div className="block"></div>`).toEqual({
             tag: 'div',
             attrs: {
                 className: 'block'
@@ -12,7 +12,7 @@ describe('es6x', () => {
     });
 
     it('should convert simple div with prop', () => {
-        expect(es6x `<div className="block" id=${'id1'}></div>`).toEqual({
+        expect(jsx `<div className="block" id=${'id1'}></div>`).toEqual({
             tag: 'div',
             attrs: {
                 className: 'block',
@@ -23,7 +23,7 @@ describe('es6x', () => {
     });
 
     it('should support data-attribute', () => {
-        expect(es6x `<div className="block" data-id=${1}></div>`).toEqual({
+        expect(jsx `<div className="block" data-id=${1}></div>`).toEqual({
             tag: 'div',
             attrs: {
                 className: 'block',
@@ -36,7 +36,7 @@ describe('es6x', () => {
     it('should parse component with child', () => {
         const Instance = { instance: true };
 
-        expect(es6x `<instance of=${Instance} text="Text of block"><p>Text from parent</p></instance>`).toEqual({
+        expect(jsx `<instance of=${Instance} text="Text of block"><p>Text from parent</p></instance>`).toEqual({
             tag: 'instance',
             attrs: {
                 of: Instance,
@@ -52,8 +52,8 @@ describe('es6x', () => {
 
     it('should correctly work with two same templates but another values', () => {
         expect([
-            es6x `<div className="block" id=${'id1'}></div>`,
-            es6x `<div className="block" id=${'id2'}></div>`
+            jsx `<div className="block" id=${'id1'}></div>`,
+            jsx `<div className="block" id=${'id2'}></div>`
         ]).toEqual([
             {
                 tag: 'div',
@@ -75,7 +75,7 @@ describe('es6x', () => {
     });
 
     it('should convert div with props and children', () => {
-        expect(es6x `<div className="block" id=${'id1'} ${{ dataset: { rerenderid: '0' } }}><p ${{ dataset: { rerenderid: '1' } }}>${'text'}</p></div>`).toEqual({
+        expect(jsx `<div className="block" id=${'id1'} ${{ dataset: { rerenderid: '0' } }}><p ${{ dataset: { rerenderid: '1' } }}>${'text'}</p></div>`).toEqual({
             tag: 'div',
             attrs: {
                 className: 'block',
@@ -97,7 +97,7 @@ describe('es6x', () => {
     });
 
     it('should convert selfclosed element', () => {
-        expect(es6x `<input type="text" checked value="${'3'}" />`).toEqual({
+        expect(jsx `<input type="text" checked value="${'3'}" />`).toEqual({
             tag: 'input',
             attrs: {
                 type: 'text',
@@ -107,7 +107,7 @@ describe('es6x', () => {
             children: []
         });
 
-        expect(es6x `<input type='text' value='${'3'}'/>`).toEqual({
+        expect(jsx `<input type='text' value='${'3'}'/>`).toEqual({
             tag: 'input',
             attrs: {
                 type: 'text',
@@ -119,7 +119,7 @@ describe('es6x', () => {
 
     it('should work with components', () => {
         const Component = {};
-        expect(es6x `<${Component}
+        expect(jsx `<${Component}
             id='id1'
             value=${'value1'}
             ${{ name: 'name1' }}
@@ -136,7 +136,7 @@ describe('es6x', () => {
 
     it('should work with elements with hybrid childs', () => {
         const Component = {};
-        expect(es6x `<div className="${'b'}"><p>${'text'}</p>${'something'}</div>`).toEqual({
+        expect(jsx `<div className="${'b'}"><p>${'text'}</p>${'something'}</div>`).toEqual({
             tag: 'div',
             attrs: {
                 className: 'b'
@@ -152,7 +152,7 @@ describe('es6x', () => {
     });
 
     it('should correctly work with white spaces', () => {
-        expect(es6x `
+        expect(jsx `
             <div>
                 <p>
                     Text of paragraph.
@@ -193,8 +193,8 @@ describe('es6x', () => {
             return [tag, attrs, firstChild];
         };
 
-        es6x.setOutputMethod(mockMethod);
-        expect(es6x `<p id='id1'>text</p>`).toEqual(['p', { id: 'id1' }, 'text']);
-        es6x.setOutputMethod();
+        jsx.setOutputMethod(mockMethod);
+        expect(jsx `<p id='id1'>text</p>`).toEqual(['p', { id: 'id1' }, 'text']);
+        jsx.setOutputMethod();
     })
 });

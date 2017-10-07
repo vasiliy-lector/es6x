@@ -195,6 +195,6 @@ es6x.setOutputMethod = function setOutputMethod(method) {
     } else {
         outputMethod = defaultOutput;
     }
-}
+};
 
 module.exports = es6x;
