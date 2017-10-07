@@ -1,4 +1,5 @@
 node_modules/
+tags
 lib/
 coverage/
 .DS_Store
