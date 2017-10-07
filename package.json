@@ -25,10 +25,10 @@
   },
   "homepage": "https://github.com/vasiliy-lector/es6x#readme",
   "dependencies": {
-    "nano-parser": "1.0.5"
+    "nano-parser": "^1.0.5"
   },
   "devDependencies": {
     "istanbul": "1.0.0-alpha.2",
-    "jasmine": "2.4.1"
+    "jasmine": "^2.8.0"
   }
 }
