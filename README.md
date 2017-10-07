@@ -44,7 +44,7 @@ export default class FormController extends Component {
     handleSubmit = () => {};
 
     render() {
-        return jsx `<${Form} action=${this.handleSubmit}>
+        return jsx `<${Form} onSubmit=${this.handleSubmit}>
             <${Input}
                 checked
                 className='input'
@@ -57,7 +57,7 @@ export default class FormController extends Component {
 ```
 The render method body is equal this jsx code:
 ```javascript
-return <Form action={this.handleSubmit}>
+return <Form onSubmit={this.handleSubmit}>
     <Input
         checked
         className='input'
